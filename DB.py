@@ -18,12 +18,11 @@ class sqlite_noFTS:
 
     def address_query(self, search_string):
         featureList = []
-        #conn = sqlite3.connect("addressbase.sqlite")
         sql = "select uprn, address_label, latitude, longitude from vlookup where address_label like ?"
         cursor = self.conn.execute( sql, ["%"+search_string+"%"] )
         for row in cursor:
         	featureList.append( self.feature_to_geojson(row) )
-        if (config.max_results) and (len(featureList) < config.max_results):
+        if (not config.max_results) or (len(featureList) < config.max_results):
         	return featureList
         else:
         	return featureList[0:config.max_results]
@@ -32,5 +31,7 @@ class sqlite_noFTS:
 
 if __name__ == "__main__":
     db = sqlite_noFTS(config.database_filename)
-    results = db.address_query("Kenelm")
-    print results
+    results = db.address_query("fish")
+    import json
+    print len( results )
+    
