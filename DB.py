@@ -27,13 +27,30 @@ class sqlite_noFTS:
             cursor = self.conn.execute( sql,  ["%"+search_string+"%"] )
         for row in cursor:
             featureList.append( self.feature_to_geojson(row) )
-        return featureList
+        return {"type": "FeatureCollection", "metadata": "metadata goes here.", "features": featureList }
+        
+    def uprn_query(self, uprn):
+    	featureList = []
+    	sql = "select uprn, address_label, latitude, longitude from vlookup where uprn = ?"
+    	cursor = self.conn.execute( sql, [ str(uprn) ] )
+    	for row in cursor:
+    		featureList.append( self.feature_to_geojson(row))
+    	# a single feature returned is totally within geojson spec, but feature collection has scope for metadata.
+    	return {"type": "FeatureCollection", "metadata": "metadata goes here.", "features": featureList }
 
 
 
 if __name__ == "__main__":
+
+if __name__ == "__main__":
+    # tested against data covering Worcestershire, UK.
     db = sqlite_noFTS()
-    results = db.address_query("fish")
+    print len( db.address_query("council")['features'] )
+    db.max_results = False # override config.
+    print len( db.address_query("FiSh")['features'] )
+    db.max_results = 100
     import json
-    print len( results )
+    with open('tests.js', 'w') as f:
+    	json.dump( db.address_query("council"), f )
+    print json.dumps( db.uprn_query(10015253452) )
     
