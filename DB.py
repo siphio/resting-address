@@ -39,9 +39,6 @@ class sqlite_noFTS:
     	return {"type": "FeatureCollection", "metadata": "metadata goes here.", "features": featureList }
 
 
-
-if __name__ == "__main__":
-
 if __name__ == "__main__":
     # tested against data covering Worcestershire, UK.
     db = sqlite_noFTS()
