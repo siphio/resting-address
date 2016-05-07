@@ -1,9 +1,13 @@
-import sqlite3, config
+import sqlite3, config, os
 
 class sqlite_noFTS:
-    def __init__(self, dbfile=config.database_filename, max_results=config.max_results):
-        self.conn = sqlite3.connect(dbfile)
-        self.max_results = max_results
+    def __init__(self):
+        if os.path.isfile(config.database_filename):
+            self.conn = sqlite3.connect( config.database_filename)
+        else:
+            raise ValueError('database file with the name '+ config.database_filename +' does not exist.')
+        self.max_results = config.max_results
+        self.metadata = config.metadata
 
     def feature_to_geojson(self, item):
         return {"type"      : "Feature",
@@ -16,6 +20,12 @@ class sqlite_noFTS:
                     "coordinates": [ item[3], item[2] ]
                     }
                 }
+    def featureList_wrapper(self, featureList):
+        return {
+            "type": "FeatureCollection",
+            "metadata": self.metadata,
+            "features": featureList
+        }
 
     def address_query(self, search_string):
         featureList = []
@@ -27,27 +37,28 @@ class sqlite_noFTS:
             cursor = self.conn.execute( sql,  ["%"+search_string+"%"] )
         for row in cursor:
             featureList.append( self.feature_to_geojson(row) )
-        return {"type": "FeatureCollection", "metadata": "metadata goes here.", "features": featureList }
+        return self.featureList_wrapper( featureList )
         
     def uprn_query(self, uprn):
-    	featureList = []
-    	sql = "select uprn, address_label, latitude, longitude from vlookup where uprn = ?"
-    	cursor = self.conn.execute( sql, [ str(uprn) ] )
-    	for row in cursor:
-    		featureList.append( self.feature_to_geojson(row))
-    	# a single feature returned is totally within geojson spec, but feature collection has scope for metadata.
-    	return {"type": "FeatureCollection", "metadata": "metadata goes here.", "features": featureList }
+        featureList = []
+        sql = "select uprn, address_label, latitude, longitude from vlookup where uprn = ?"
+        cursor = self.conn.execute( sql, [ str(uprn) ] )
+        for row in cursor:
+            featureList.append( self.feature_to_geojson(row))
+        # a single feature returned is totally within geojson spec, but feature collection has scope for metadata.
+        return self.featureList_wrapper( featureList )
+
 
 
 if __name__ == "__main__":
-    # tested against data covering Worcestershire, UK.
+    # suggest overwrite live config values.
+    config.max_results = 50
     db = sqlite_noFTS()
     print len( db.address_query("council")['features'] )
-    db.max_results = False # override config.
     print len( db.address_query("FiSh")['features'] )
+    print len( db.address_query("boundary")['features'] )
     db.max_results = 100
     import json
     with open('tests.js', 'w') as f:
-    	json.dump( db.address_query("council"), f )
+        json.dump( db.address_query("council"), f )
     print json.dumps( db.uprn_query(10015253452) )
-    
