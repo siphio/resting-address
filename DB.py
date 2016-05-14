@@ -20,12 +20,19 @@ class sqlite_noFTS:
                     "coordinates": [ item[3], item[2] ]
                     }
                 }
+
     def featureList_wrapper(self, featureList):
-        return {
+        wrapper = {
             "type": "FeatureCollection",
             "metadata": self.metadata,
             "features": featureList
         }
+        if len(featureList) ==self.max_results:
+            wrapper["metadata"]["results_throttled"] = True
+        else:
+            wrapper["metadata"]["results_throttled"] = False
+        return wrapper
+
 
     def address_query(self, search_string):
         featureList = []
@@ -54,11 +61,11 @@ if __name__ == "__main__":
     # suggest overwrite live config values.
     config.max_results = 50
     db = sqlite_noFTS()
-    print len( db.address_query("council")['features'] )
-    print len( db.address_query("FiSh")['features'] )
-    print len( db.address_query("boundary")['features'] )
+    print( len( db.address_query("council")['features'] ))
+    print( len( db.address_query("FiSh")['features'] ))
+    print( len( db.address_query("boundary")['features'] ))
     db.max_results = 100
     import json
     with open('tests.js', 'w') as f:
         json.dump( db.address_query("council"), f )
-    print json.dumps( db.uprn_query(10015253452) )
+    print( json.dumps( db.uprn_query(10015253452) ))/
