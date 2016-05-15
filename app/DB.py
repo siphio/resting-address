@@ -8,6 +8,9 @@ class sqlite_noFTS:
             raise ValueError('database file with the name '+ config.database_filename +' does not exist.')
         self.max_results = config.max_results
         self.metadata = config.metadata
+    
+    def __del__(self):
+    	self.conn.close()
 
     def feature_to_geojson(self, item):
         return {"type"      : "Feature",
