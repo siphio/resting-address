@@ -4,7 +4,7 @@
 
 A straightforward and relatively minimalist addressbase gazetteer, with web interface for search and  display, and a geoJSON API. The web interface is designed for easy embedding in another page (e.g., with iframes).
 
-Resting-address currently uses Mapbox for maps, and is SQLite dependent. The intention is for it to also support sqlite with FTS4 and Postgres as a datastore, and  
+Resting-address currently uses Mapbox for maps, and is SQLite dependent. The intention is for it to also support sqlite with FTS4 and Postgres as a datastore. 
 
 My intention is to update and load a connecting QGIS plugin for gazetteer lookups.
 
@@ -16,3 +16,4 @@ My intention is to update and load a connecting QGIS plugin for gazetteer lookup
 4. Finish addressbase loader (to include COUs).
 5. Add web interface for the addressbase loader.
 6. Support for other leaflet-supported basemaps, not just mapbox.
+7. Auth on the API (for unlimited API use for authorised users).
