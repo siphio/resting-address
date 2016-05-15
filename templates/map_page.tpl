@@ -7,15 +7,6 @@
 <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 
-<!--
-<script>
-
-var data = {"features": [{"geometry": {"coordinates": [-2.2345409, 52.3701363], "type": "Point"}, "type": "Feature", "properties": {"uprn": 100120736613, "address": "10 ROBIN COURT, KIDDERMINSTER, DY10 4UJ"}}], "type": "FeatureCollection", "metadata": {"OS License": "copyright etc, etc, etc.", "results_throttled": false}}
-data.features[0].properties["marker-color"] = "#33C3F0";
-
-</script>
--->
-
 <script>
 var data = {{!results}};
 </script>
