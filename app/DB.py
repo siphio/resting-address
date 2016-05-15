@@ -68,4 +68,4 @@ if __name__ == "__main__":
     import json
     with open('tests.js', 'w') as f:
         json.dump( db.address_query("council"), f )
-    print( json.dumps( db.uprn_query(10015253452) ))/
+    print( json.dumps( db.uprn_query(10015253452) ))
